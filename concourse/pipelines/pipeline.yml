@@ -223,7 +223,7 @@ resources:
     branch: {{ccp-git-branch}}
     private_key: {{ccp-git-key}}
     uri: {{ccp-git-remote}}
-    tag_filter: {{ccp-tag-filter}}
+##    tag_filter: {{ccp-tag-filter}}
 
 - name: terraform
   type: terraform
@@ -1334,11 +1334,20 @@ jobs:
     params:
       <<: *ccp_gen_cluster_default_params
   - task: run_tests
-    tags: ["ccp"]
-    file: gpdb_src/concourse/tasks/run_tinc.yml
-    image: centos-gpdb-dev-6
-    params:
-      TINC_TARGET: walrep_1
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: toolsmiths/ccp
+          tag: "7"
+      run:
+        path: 'false'
+    # tags: ["ccp"]
+    # file: gpdb_src/concourse/tasks/run_tinc.yml
+    # image: centos-gpdb-dev-6
+    # params:
+    #   TINC_TARGET: walrep_1
     on_success:
       <<: *ccp_destroy
     on_failure:
